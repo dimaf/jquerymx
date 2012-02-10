@@ -315,7 +315,8 @@ steal("jquery").then(function( $ ) {
 			return $.ajax({
 				url: url,
 				dataType: "view",
-				async: async
+				async: async,
+				global: false//Do not throw global events  not to get wait screen on view download
 			});
 		},
 		// returns true if something looks like a deferred
