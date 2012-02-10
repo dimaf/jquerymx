@@ -57,7 +57,9 @@ var validate = function(attrNames, options, proc) {
 			self.validations[attrName] = [];
 		}
 		self.validations[attrName].push(function(){
-			var res = proc.call(this, this[attrName]);
+			//DKH: use attr instead of directly accessing the value
+			//this will support transient attributes
+			var res = proc.call(this, this.attr(attrName));
 			return res === undefined ? undefined : (options.message || res);
 		})
 	});
@@ -120,7 +122,7 @@ $.extend($.Model, {
     */
    validateFormatOf: function(attrNames, regexp, options) {
       validate.call(this, attrNames, options, function(value) {
-         if(  (typeof value != 'undefined' && value != '')
+         if(  (typeof value !== 'undefined' && value !== '' && value !== null)
          	&& String(value).match(regexp) == null )
          {
             return this.Class.validationMessages.format;
@@ -160,9 +162,9 @@ $.extend($.Model, {
     */
    validateLengthOf: function(attrNames, min, max, options) {
       validate.call(this, attrNames, options, function(value) {
-         if((typeof value == 'undefined' && min > 0) || value.length < min)
+         if(((typeof value == 'undefined'||value===null) && min > 0) || (typeof value !== 'undefined' && value!==null && value.length < min))
             return this.Class.validationMessages.lengthShort + " (min=" + min + ")";
-         else if(typeof value != 'undefined' && value.length > max)
+         else if(typeof value != 'undefined' && value!==null && value.length > max)
             return this.Class.validationMessages.lengthLong + " (max=" + max + ")";
       });
    },
@@ -177,7 +179,7 @@ $.extend($.Model, {
     */
    validatePresenceOf: function(attrNames, options) {
       validate.call(this, attrNames, options, function(value) {
-         if(typeof value == 'undefined' || value == "" || value === null)
+         if(typeof value === 'undefined' || value === "" || value === null)
             return this.Class.validationMessages.presence;
       });
    },
@@ -194,7 +196,7 @@ $.extend($.Model, {
     */
    validateRangeOf: function(attrNames, low, hi, options) {
       validate.call(this, attrNames, options, function(value) {
-         if(typeof value != 'undefined' && value < low || value > hi)
+         if(typeof value != 'undefined' && value!==null && value < low || value > hi)
             return this.Class.validationMessages.range + " [" + low + "," + hi + "]";
       });
    }
