@@ -946,7 +946,9 @@ steal('jquery/class', 'jquery/lang/string', 'common_ux_js_lib_internal/jsmvc/con
 				return null;
 			}
 			if ( attributes instanceof this ) {
-				attributes = attributes.serialize();
+				//Do not copy the object if it is already of proper type
+				//attributes = attributes.serialize();
+				return attributes;
 			}
 			return new this(
 			// checks for properties in an object (like rails 2.0 gives);
@@ -1040,13 +1042,19 @@ steal('jquery/class', 'jquery/lang/string', 'common_ux_js_lib_internal/jsmvc/con
 				// otherwise if a model list
 				(ml ?
 				// get the raw objects from the list
-				instancesRawData.serialize() :
+				//instancesRawData.serialize() :
+				//do not call serialize since will return instancesRawData directly anyway
+				instancesRawData:
 				// get the object's data
 				instancesRawData.data),
 				// the number of items
 				length = raw ? raw.length : null,
 				i = 0;
 
+			if (ml){
+				//Do not do conversion if already passing List of proper Type
+				return instancesRawData;
+			}
 			//!steal-remove-start
 			if (!length ) {
 				steal.dev.warn("model.js models has no data.  If you have one item, use model")
